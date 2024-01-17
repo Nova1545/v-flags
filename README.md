@@ -43,7 +43,8 @@ java -Xms8G -Xmx8G -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptio
 *(according to documentation, untested)*
 
 # Explanation
-> [!NOTE] For most of the flags below `-XX:+UnlockExperimentalVMOptions` and/or `-XX:+UnlockDiagnosticVMOptions` are required
+> [!NOTE]
+> For most of the flags below `-XX:+UnlockExperimentalVMOptions` and/or `-XX:+UnlockDiagnosticVMOptions` are required
 
 
 > -Xmx8G
@@ -56,7 +57,8 @@ Specifies the maximum amount of memory the JVM may use in gigabytes
 Specifies the initial heap size for the JVM in gigabytes
 <br>
 
-> [!NOTE] Setting both -Xms and Xmx to the same size is recommended
+> [!NOTE] 
+> Setting both -Xms and Xmx to the same size is recommended
 
 <br>
 
