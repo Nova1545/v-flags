@@ -46,15 +46,18 @@ java -Xms8G -Xmx8G -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptio
 > [!NOTE]
 > For most of the flags below `-XX:+UnlockExperimentalVMOptions` and/or `-XX:+UnlockDiagnosticVMOptions` are required
 
+<br>
 
 > -Xmx8G
 
 Specifies the maximum amount of memory the JVM may use in gigabytes
+
 <br>
 
 > -Xms8G
 
 Specifies the initial heap size for the JVM in gigabytes
+
 <br>
 
 > [!NOTE] 
@@ -65,41 +68,49 @@ Specifies the initial heap size for the JVM in gigabytes
 > -XX:+UseZGC
 
 Tells the JVM to use the ZGC garbage collector
+
 <br>
 
 > -XX:-ZUncommit 
 
 Stops ZGC from returning memory back to the OS. This can help improve speed as it doesn't have to wait for the OS to reallocate the memory but may also result on undesirably high memory usage and may negatively impact environments where multiple applications are running
+
 <br>
 
 > -XX:MaxGCPauseMillis=200
 
 Tells JVM to try and keep it's GC (Garbage collector) pauses to or under this specified amount of time. However this only a target and not a guarantee. Doesn't work with `-XX:+UseZGC`
+
 <br>
 
 > -XX:+UseG1GC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:MaxGCPauseMillis=200
 
 Tells java while using stability flags to use G1GC and make short pauses instead of long ones.
+
 <br>
 
 > -XX:+AlwaysActAsServerClassMachine
 
 Forces java to use garbage collection that would be used with "Server class" hardware. Should show benefits on systems with higher core count CPUs as garbage can be passed of to another thread. `ParallelGC`, `CMS` (Concurrent Mark Sweep) or `G1GC` will be used instead of SerialGC
+
 <br>
 
 > -XX:+AlwaysPreTouch
 
 Pre-touches memory during allocation, causing them to be loaded into physical memory. Can reduce delays accessing newly allocated memory.
+
 <br>
 
 > -XX:+DisableExplicitGC
 
 Prevents forced GC calls (By a plugin, or other code), only allowing one's by the JVM itself
+
 <br>
 
 > -XX:+UseNUMA
 
 Tells JVM that the system uses Non-uniform Memory Access (NUMA), increasing the use of lower latency memory on multi-node topologies (Caches or RAM). Only available when used with `-XX:+UseParallelGC`
+
 <br>
 
 > -XX:AllocatePrefetchStyle=0-3
@@ -111,11 +122,13 @@ Enables pre-fetching and set's the prefetch style ^[1]
 3 - Prefetches data after allocation (Potentially making access to a objects fields faster)
 
 Setting to "3" has been recommend for use with Minecraft as it improves performance  
+
 <br>
 
 > -XX:+PerfDisableSharedMem
 
 Disables a section of shared memory (A memory mapped file) used for performance statistics. This is done synchronously and can cause performance impacts
+
 <br>
 
 > XX:+ParallelRefProcEnabled
