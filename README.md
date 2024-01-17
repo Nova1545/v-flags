@@ -17,7 +17,7 @@ Some versions have [ZGC](https://github.com/openjdk/zgc) support and some don't,
 - [x] [Fabric](https://github.com/FabricMC)
 - [x] [Quilt](https://github.com/QuiltMC)
 - [x] [Forge](https://github.com/MinecraftForge/MinecraftForge)
-- [x] Most JVM server software, even non minecraft (No guarentee, not recommended.)
+- [x] Most JVM server software, even non-minecraft (No guarantee, not recommended.)
 
 ***Performance Focused / Server / More than 12GB, ZGC:***
 
@@ -43,46 +43,77 @@ java -Xms8G -Xmx8G -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptio
 *(according to documentation, untested)*
 
 # Explanation
+[!NOTE] For most of the flags below `-XX:+UnlockExperimentalVMOptions` and/or `-XX:+UnlockDiagnosticVMOptions` are required
 
-> -Xms8G -Xmx8G
 
-Sets the minimum and maximum memory usage, obvious. Always set these values to the same number as unused ram is wasted ram in most cases.
+> -Xmx8G
 
-> -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions
+Specifies the maximum amount of memory the JVM may use in gigabytes
+<br>
 
-Allows for the use of most of the flags here.
+> -Xms8G
 
-> -XX:+UseZGC -XX:-ZUncommit -XX:MaxGCPauseMillis=200
+Specifies the initial heap size for the JVM in gigabytes
+<br>
 
-Tells java while using performance flags to use ZGC and forces it to never give allocated memory back to the OS to improve speeds.
+[!NOTE] Setting both -Xms and Xmx to the same size is recommended
+<br>
+
+> -XX:+UseZGC
+
+Tells the JVM to use the ZGC garbage collector
+<br>
+
+> -XX:-ZUncommit 
+
+Stops ZGC from returning memory back to the OS. This can help improve speed as it doesn't have to wait for the OS to reallocate the memory but may also result on undesirably high memory usage and may negatively impact environments where multiple applications are running
+<br>
+
+> -XX:MaxGCPauseMillis=200
+
+Tells JVM to try and keep it's GC (Garbage collector) pauses to or under this specified amount of time. However this only a target and not a guarantee. Doesn't work with `-XX:+UseZGC`
+<br>
 
 > -XX:+UseG1GC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:MaxGCPauseMillis=200
 
 Tells java while using stability flags to use G1GC and make short pauses instead of long ones.
+<br>
 
 > -XX:+AlwaysActAsServerClassMachine
 
-In certain hardware configurations java may force SerialGC which is much slower than G1GC or ZGC, this forces java to always think of the machine as "Server Class"
+Forces java to use garbage collection that would be used with "Server class" hardware. Should show benefits on systems with higher core count CPUs as garbage can be passed of to another thread. `ParallelGC`, `CMS` (Concurrent Mark Sweep) or `G1GC` will be used instead of SerialGC
+<br>
 
 > -XX:+AlwaysPreTouch
 
-Allocates memory directly to the JVM instead of virtual memory.
+Pre-touches memory during allocation, causing them to be loaded into physical memory. Can reduce delays accessing newly allocated memory.
+<br>
 
 > -XX:+DisableExplicitGC
 
-Prevents Minecraft or any mods/plugins from performing garbage collection on it's own.
+Prevents forced GC calls (By a plugin, or other code), only allowing one's by the JVM itself
+<br>
 
 > -XX:+UseNUMA
 
-Allows a CPU to access local memory faster, may fail on some configurations.
+Tells JVM that the system uses Non-uniform Memory Access (NUMA), increasing the use of lower latency memory on multi-node topologies (Caches or RAM). Only available when used with `-XX:+UseParallelGC`
+<br>
 
-> -XX:AllocatePrefetchStyle=3
+> -XX:AllocatePrefetchStyle=0-3
 
-Allows the JVM to prefetch instructions.
+Enables pre-fetching and set's the prefetch style ^[1]
+0 - Disables any pre-fetching
+1 (Default) - Prefetches object fields (Increasing access speed as the fields likely are already loaded into cache)
+2 - Prefetches data right before allocation (Thus reducing latency for access to non-cached data)
+3 - Prefetches data after allocation (Potentially making access to a objects fields faster)
+
+Setting to "3" has been recommend for use with Minecraft as it improves performance  
+<br>
 
 > -XX:+PerfDisableSharedMem
 
-Disables other processes from using memory that belongs to the JVM.
+Disables a section of shared memory (A memory mapped file) used for performance statistics. This is done synchronously and can cause performance impacts
+<br>
 
 > XX:+ParallelRefProcEnabled
 
@@ -136,3 +167,6 @@ These flags are generally either [GraalVM](https://www.graalvm.org/) specific op
 Although speculation as of now, you could arise into additional problems when using these flags or any flag modification for that matter and in very rare circumstances, maybe even **corruption.** Not saying it will happen, but it *could* theoretically happen.
 
 void is not responsible if any damage happens as a result of these flags. Use them at your own risk.
+<br>
+
+[^1] Explanation of the different values may not be correct as information was hard to come by
